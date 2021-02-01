@@ -2,7 +2,7 @@ package product
 
 import (
 	"Catlog/model"
-	product2 "Catlog/service/product"
+	"Catlog/service"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -34,15 +34,15 @@ func TestHandler_ProductWithId(t *testing.T) {
 	}{
 		{"1",npd[0],http.StatusOK,nil},
 		{"2",npd[1],http.StatusOK,nil},
-		{"3",model.NewProduct{},http.StatusBadRequest,errors.New("Not Found!")},
-		{"abcd",model.NewProduct{},http.StatusInternalServerError,errors.New("Invalid Id!")},
+		{"3",model.NewProduct{},http.StatusBadRequest,errors.New(fmt.Sprintf(model.ProductNotAvailable,3))},
+		{"abcd",model.NewProduct{},http.StatusInternalServerError,errors.New(model.InvalidId)},
 	}
 	ctrl := gomock.NewController(t)
-	serv := product2.NewMockProduct(ctrl)
+	serv := service.NewMockProduct(ctrl)
 	h := Handler{serv}
 	for _,testCase := range testCases{
 
-		link := "/Product/%s"
+		link := "/product/%s"
 		r := httptest.NewRequest("GET",fmt.Sprintf(link,testCase.id),nil)
 		w  := httptest.NewRecorder()
 		//router := mux.NewRouter()
@@ -63,20 +63,20 @@ func TestHandler_ProductWithId(t *testing.T) {
 func TestHandler_InsertProduct(t *testing.T) {
 	testCases := []struct{
 		pb ProductBrand
-		expectedpd model.Product
+		expectedpd model.NewProduct
 		stcode int
 		err error
 	}{
-		{pbrand[0],pd[0],http.StatusOK,nil},
+		{pbrand[0],npd[0],http.StatusCreated,nil},
 	}
 
 	ctrl := gomock.NewController(t)
-	serv := product2.NewMockProduct(ctrl)
+	serv := service.NewMockProduct(ctrl)
 	h := Handler{serv}
 	for _,testCase := range testCases{
 		l, _ := json.Marshal(testCase.pb)
 		m := bytes.NewBuffer(l)
-		link := "/Product/Insert"
+		link := "/product"
 		r := httptest.NewRequest("POST",link,m)
 		w  := httptest.NewRecorder()
 		serv.EXPECT().InsertProductBrand(testCase.pb.Pname,testCase.pb.Bname).Return(testCase.expectedpd,testCase.err)
@@ -86,4 +86,31 @@ func TestHandler_InsertProduct(t *testing.T) {
 		}
 	}
 
+}
+
+
+func TestHandler_InsertBrandErr(t *testing.T) {
+	testCases := []struct{
+		pb string
+		expectedpd model.NewProduct
+		stcode int
+		err error
+	}{
+		{`{"name": "}`,model.NewProduct{},http.StatusInternalServerError,nil},
+	}
+
+	ctrl := gomock.NewController(t)
+	serv := service.NewMockProduct(ctrl)
+	h := Handler{serv}
+	for _,testCase := range testCases{
+		l, _ := json.Marshal(testCase.pb)
+		m := bytes.NewBuffer(l)
+		link := "/product"
+		r := httptest.NewRequest("POST",link,m)
+		w  := httptest.NewRecorder()
+		h.InsertProduct(w,r)
+		if w.Code != testCase.stcode {
+			t.Fatalf("InsertProduct() = %v , want %v", w.Code,testCase.stcode)
+		}
+	}
 }

@@ -13,3 +13,4 @@ type Err struct {
 func (er Err) Error() string{
 	return fmt.Sprintf(ErrPro,er.Id)
 }
+

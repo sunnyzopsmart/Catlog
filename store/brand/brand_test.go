@@ -23,7 +23,7 @@ var u = []model.Brand{{
 func TestFindByID(t *testing.T) {
 	db, mock,err := sqlmock.New()
 	if err!=nil {
-		fmt.Sprintf("Error in SQLMock!")
+		fmt.Sprintf(model.SQLMockError)
 		return
 	}
 	dbHandler := New(db)
@@ -44,10 +44,10 @@ func TestFindByID(t *testing.T) {
 		rows := sqlmock.NewRows([]string{"id", "name"}).
 			AddRow(testCase.expbrand.Id, testCase.expbrand.Name)
 		mock.ExpectQuery(query).WithArgs(testCase.id).WillReturnRows(rows)
-		res,_ := dbHandler.GetById(testCase.id)
+		res,_ := dbHandler.GetBrandById(testCase.id)
 
 		if !reflect.DeepEqual(res, testCase.expbrand){
-			t.Errorf("Product resulr was incorrect, got: %v, want: %v.", res, testCase.expbrand)
+			t.Errorf("Product result was incorrect, got: %v, want: %v.", res, testCase.expbrand)
 		}
 	}
 }
@@ -55,7 +55,7 @@ func TestFindByID(t *testing.T) {
 func TestFindByIDError(t *testing.T){
 	db, mock,err := sqlmock.New()
 	if err!=nil {
-		fmt.Sprintf("Error in SQLMock!")
+		fmt.Sprintf(model.SQLMockError)
 		return
 	}
 	dbHandler := New(db)
@@ -67,13 +67,13 @@ func TestFindByIDError(t *testing.T){
 		err error
 	}{
 		{3,model.Brand{},model.Err{3}},
-		{-3,model.Brand{},model.Err{-3}},
+		{-3,model.Brand{},errors.New(model.NegativeId)},
 	}
 	query := "SELECT id, name FROM brand WHERE id = ?"
 
 	for _,testCase := range testCases {
 		mock.ExpectQuery(query).WithArgs(testCase.id).WillReturnError(testCase.err)
-		_, err := dbHandler.GetById(testCase.id)
+		_, err := dbHandler.GetBrandById(testCase.id)
 		fmt.Println(err)
 		if !reflect.DeepEqual(err, testCase.err) {
 			t.Errorf("Error, got: %v, want: %v.", err, testCase.err)
@@ -104,11 +104,18 @@ func TestFindByName(t *testing.T) {
 		AddRow(u[0].Id, u[0].Name)
 	//fmt.Println(rows)
 	mock.ExpectQuery(query).WithArgs(u[0].Name).WillReturnRows(rows)
-	res,err := dbHandler.GetByName(u[0].Name)
+	res,err := dbHandler.GetBrandByName(u[0].Name)
 
-	assert.Equal(t, u[0],res)
+	if !reflect.DeepEqual(res, u[0]){
+		t.Errorf("Brand result was incorrect, got: %v, want: %v.", res, u[0])
+	}
 
-	mock.ExpectQuery(query).WithArgs("Acer").WillReturnError(errors.New("Brand not Found!"))
-	res,err = dbHandler.GetByName("Acer")
-	assert.Error(t, err,errors.New("Brand not Found!"))
+	bname := "Acer"
+	berr := errors.New(fmt.Sprintf(model.BrandNotFound,bname))
+	mock.ExpectQuery(query).WithArgs(bname).WillReturnError(berr)
+	res,err = dbHandler.GetBrandByName(bname)
+	//fmt.Println(err)
+	if !reflect.DeepEqual(err, berr) {
+		t.Errorf("Error, got: %v, want: %v.", err, berr)
+	}
 }

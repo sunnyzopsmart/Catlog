@@ -2,8 +2,7 @@ package product
 
 import (
 	"Catlog/model"
-	"Catlog/store/brand"
-	"Catlog/store/product"
+	"Catlog/store"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/mock/gomock"
@@ -42,14 +41,14 @@ func TestGetById(t *testing.T)  {
 	}
 	//fmt.Println(testCases)
 	ctrl := gomock.NewController(t)
-	ps := product.NewMockStore(ctrl)
-	bs := brand.NewMockStore(ctrl)
+	ps := store.NewMockStore(ctrl)
+	bs := store.NewMockBrand(ctrl)
 	pserv := New(ps,bs)
 
 	for  _,k := range testCases{
-		ps.EXPECT().GetById(k.id).Return(k.expectedProdStore,k.err)
+		ps.EXPECT().GetProductById(k.id).Return(k.expectedProdStore,k.err)
 		if k.err==nil {
-			bs.EXPECT().GetById(k.id).Return(k.expectedBrandStore,k.err)
+			bs.EXPECT().GetBrandById(k.id).Return(k.expectedBrandStore,k.err)
 		}
 		np,err := pserv.GetById(k.id)
 		//fmt.Println(err)
@@ -86,15 +85,15 @@ func TestInsert(t *testing.T){
 	}
 
 	ctrl := gomock.NewController(t)
-	ps := product.NewMockStore(ctrl)
-	bs := brand.NewMockStore(ctrl)
+	ps := store.NewMockStore(ctrl)
+	bs := store.NewMockBrand(ctrl)
 	pserv := New(ps,bs)
 	for  _,k := range testCases{
 		if !k.branerr {
-			bs.EXPECT().GetByName(k.bname).Return(model.Brand{},k.experr)
+			bs.EXPECT().GetBrandByName(k.bname).Return(model.Brand{},k.experr)
 			bs.EXPECT().InsertBrand(k.bran).Return(k.expecBrandId, nil)
 		}else {
-			bs.EXPECT().GetByName(k.bname).Return(k.bran,k.experr)
+			bs.EXPECT().GetBrandByName(k.bname).Return(k.bran,k.experr)
 		}
 		ps.EXPECT().InsertProduct(k.prod).Return(k.expecProductId,nil)
 		mp,err := pserv.InsertProductBrand(k.pname,k.bname)

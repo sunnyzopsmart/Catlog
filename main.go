@@ -25,7 +25,7 @@ func main() {
 	ht := product3.Handler{s}
 	fmt.Println("Server starting....")
 	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/product/{id}", ht.ProductWithId)
-	r.HandleFunc("/product", ht.InsertProduct).Methods("POST")
+	r.HandleFunc("/product/{id}", ht.ProductWithId).Methods(http.MethodGet)
+	r.HandleFunc("/product", ht.InsertProduct).Methods(http.MethodPost)
 	http.ListenAndServe(":8080",r)
 }
