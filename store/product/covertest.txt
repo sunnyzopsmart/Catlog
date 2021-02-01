@@ -1,0 +1,16 @@
+mode: set
+Catlog/store/product/mock_interface.go:26.55,30.2 3 0
+Catlog/store/product/mock_interface.go:33.53,35.2 1 0
+Catlog/store/product/mock_interface.go:38.60,44.2 5 0
+Catlog/store/product/mock_interface.go:47.71,50.2 2 0
+Catlog/store/product/mock_interface.go:53.65,59.2 5 0
+Catlog/store/product/mock_interface.go:62.76,65.2 2 0
+Catlog/store/product/store.go:13.27,15.2 1 1
+Catlog/store/product/store.go:16.56,19.30 3 1
+Catlog/store/product/store.go:22.2,24.15 3 1
+Catlog/store/product/store.go:19.30,21.3 1 1
+Catlog/store/product/store.go:27.61,30.16 3 1
+Catlog/store/product/store.go:33.2,34.16 2 1
+Catlog/store/product/store.go:37.2,38.24 2 1
+Catlog/store/product/store.go:30.16,32.3 1 0
+Catlog/store/product/store.go:34.16,36.3 1 0
