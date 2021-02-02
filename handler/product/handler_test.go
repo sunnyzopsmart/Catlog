@@ -14,13 +14,10 @@ import (
 	"strconv"
 	"testing"
 )
-var npd = []model.NewProduct{
-	{1,"Mouse","Dell"},
-	{2,"Laptop","Lenevo"},
-}
+
 var pd = []model.Product{
-	{1,"Mouse",1},
-	{2,"Laptop",2},
+	{1,"Mouse",model.Brand{1,"Dell"}},
+	{2,"Laptop",model.Brand{2,"Lenevo"}},
 }
 var pbrand = []ProductBrand{
 	{"Mouse","Dell"},
@@ -28,14 +25,14 @@ var pbrand = []ProductBrand{
 func TestHandler_ProductWithId(t *testing.T) {
 	testCases := []struct{
 		id string
-		expectednpd model.NewProduct
+		expectednpd model.Product
 		stCode int
 		err error
 	}{
-		{"1",npd[0],http.StatusOK,nil},
-		{"2",npd[1],http.StatusOK,nil},
-		{"3",model.NewProduct{},http.StatusBadRequest,errors.New(fmt.Sprintf(model.ProductNotAvailable,3))},
-		{"abcd",model.NewProduct{},http.StatusInternalServerError,errors.New(model.InvalidId)},
+		{"1",pd[0],http.StatusOK,nil},
+		{"2",pd[1],http.StatusOK,nil},
+		{"3",model.Product{},http.StatusBadRequest,errors.New(fmt.Sprintf(model.ProductNotAvailable,3))},
+		{"abcd",model.Product{},http.StatusInternalServerError,errors.New(model.InvalidId)},
 	}
 	ctrl := gomock.NewController(t)
 	serv := service.NewMockProduct(ctrl)
@@ -63,11 +60,11 @@ func TestHandler_ProductWithId(t *testing.T) {
 func TestHandler_InsertProduct(t *testing.T) {
 	testCases := []struct{
 		pb ProductBrand
-		expectedpd model.NewProduct
+		expectedpd model.Product
 		stcode int
 		err error
 	}{
-		{pbrand[0],npd[0],http.StatusCreated,nil},
+		{pbrand[0],pd[0],http.StatusCreated,nil},
 	}
 
 	ctrl := gomock.NewController(t)
@@ -92,11 +89,11 @@ func TestHandler_InsertProduct(t *testing.T) {
 func TestHandler_InsertBrandErr(t *testing.T) {
 	testCases := []struct{
 		pb string
-		expectedpd model.NewProduct
+		expectedpd model.Product
 		stcode int
 		err error
 	}{
-		{`{"name": "}`,model.NewProduct{},http.StatusInternalServerError,nil},
+		{`{"name": "}`,model.Product{},http.StatusInternalServerError,nil},
 	}
 
 	ctrl := gomock.NewController(t)

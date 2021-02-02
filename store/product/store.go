@@ -25,13 +25,13 @@ func (s *dbStore) GetProductById(id int) (model.Product,error){
 		return pd,model.Err{id}
 	}
 	defer dis.Close()
-	err = dis.Scan(&pd.Id,&pd.Name,&pd.BId)
+	err = dis.Scan(&pd.Id,&pd.Name,&pd.BrandDetail.Id)
 	return pd,nil
 }
 
 func (s *dbStore) InsertProduct(p model.Product) (int,error){
 	sq := "INSERT INTO product(name, bid) VALUES (?,?)"
-	res, err := s.db.Exec(sq,p.Name,p.BId)
+	res, err := s.db.Exec(sq,p.Name,p.BrandDetail.Id)
 	if err != nil {
 		return -1,errors.New(model.SQLProblem)
 	}

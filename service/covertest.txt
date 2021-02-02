@@ -1,0 +1,11 @@
+mode: set
+Catlog/service/product/service.go:15.55,17.2 1 1
+Catlog/service/product/service.go:18.62,21.14 3 1
+Catlog/service/product/service.go:26.2,34.24 8 1
+Catlog/service/product/service.go:21.14,24.3 2 1
+Catlog/service/product/service.go:37.92,40.13 3 1
+Catlog/service/product/service.go:46.2,49.13 4 1
+Catlog/service/product/service.go:52.2,54.16 3 1
+Catlog/service/product/service.go:40.13,42.14 2 1
+Catlog/service/product/service.go:42.14,44.4 1 0
+Catlog/service/product/service.go:49.13,51.3 1 0

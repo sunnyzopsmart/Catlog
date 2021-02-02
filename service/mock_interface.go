@@ -35,10 +35,10 @@ func (m *MockProduct) EXPECT() *MockProductMockRecorder {
 }
 
 // GetById mocks base method.
-func (m *MockProduct) GetById(id int) (model.NewProduct, error) {
+func (m *MockProduct) GetById(id int) (model.Product, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", id)
-	ret0, _ := ret[0].(model.NewProduct)
+	ret0, _ := ret[0].(model.Product)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,10 +50,10 @@ func (mr *MockProductMockRecorder) GetById(id interface{}) *gomock.Call {
 }
 
 // InsertProductBrand mocks base method.
-func (m *MockProduct) InsertProductBrand(pName, bName string) (model.NewProduct, error) {
+func (m *MockProduct) InsertProductBrand(pName, bName string) (model.Product, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertProductBrand", pName, bName)
-	ret0, _ := ret[0].(model.NewProduct)
+	ret0, _ := ret[0].(model.Product)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

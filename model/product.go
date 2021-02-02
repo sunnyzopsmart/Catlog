@@ -2,7 +2,7 @@ package model
 type Product struct {
 	Id int `json:"id"`
 	Name string `json:"name"`
-	BId int `json:"bid"`
+	BrandDetail Brand `json:"brand"`
 }
 
 type RetErr struct{

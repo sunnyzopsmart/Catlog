@@ -10,8 +10,8 @@ import (
 )
 
 var u = []model.Product{
-	{1,"Headphone", 1,},
-    {2,"Mouse",1},
+	{1,"Headphone", model.Brand{1,""}},
+    {2,"Mouse",model.Brand{1,""}},
 }
 func TestFindByID(t *testing.T) {
 	db, mock,err := sqlmock.New()
@@ -35,7 +35,7 @@ func TestFindByID(t *testing.T) {
 
 	for _,testCase := range testCases{
 		rows := sqlmock.NewRows([]string{"id", "name", "bid"}).
-			AddRow(testCase.expproduct.Id, testCase.expproduct.Name, testCase.expproduct.BId)
+			AddRow(testCase.expproduct.Id, testCase.expproduct.Name, testCase.expproduct.BrandDetail.Id)
 		mock.ExpectQuery(query).WithArgs(testCase.id).WillReturnRows(rows)
 		res,_ := dbHandler.GetProductById(testCase.id)
 
@@ -82,7 +82,7 @@ func TestInsert(t *testing.T){
 	dbHandler := New(db)
 	query := "INSERT INTO product"
 
-	mock.ExpectExec(query).WithArgs(u[0].Name, u[0].BId).WillReturnResult(sqlmock.NewResult(1,1))
+	mock.ExpectExec(query).WithArgs(u[0].Name, u[0].BrandDetail.Id).WillReturnResult(sqlmock.NewResult(1,1))
 
 	lastID,err := dbHandler.InsertProduct(u[0])
 	if !reflect.DeepEqual(lastID, u[0].Id){
